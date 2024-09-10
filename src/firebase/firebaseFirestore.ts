@@ -1,4 +1,4 @@
-import { collection, doc, DocumentData, DocumentSnapshot, getDoc, getDocs, QuerySnapshot } from "firebase/firestore";
+import { collection, doc, DocumentData, DocumentSnapshot, getDoc, getDocs, query, QuerySnapshot, where } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 
@@ -19,6 +19,24 @@ export const getTimestampByDate = async (uid: string, date: string): Promise<Que
         const collectionRef = collection(db, "snapshots", uid, "personal", date, "timestamps");
 
         const querySnapshot = await getDocs(collectionRef);
+
+        console.log(querySnapshot)
+        console.log(querySnapshot.size)
+        return querySnapshot;
+    } catch (error: any) {
+        console.error('Unexpected error occurred:', error.message);
+        return undefined;
+    }
+};
+
+
+export const getTimestampByDateAfterTime = async (uid: string, date: string, time: Number): Promise<QuerySnapshot<DocumentData, DocumentData> | undefined>=> {
+    try {
+        const collectionRef = collection(db, "snapshots", uid, "personal", date, "timestamps");
+
+        const timeQuery = query(collectionRef, where("snapshotTimeUnixEpoch", '>', time as unknown as Number))
+
+        const querySnapshot = await getDocs(timeQuery);
 
         console.log(querySnapshot)
         console.log(querySnapshot.size)

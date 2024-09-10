@@ -3,7 +3,7 @@ import './App.css'
 import { UserCredential } from 'firebase/auth'
 import LeafletWrapper, { TimestampInformation } from './leaflet/leaflet'
 import { firebaseSignIn, firebaseSignUp } from './firebase/firebaseAuth'
-import { getSharePermission, getTimestampByDate, getTimestampByDateOld } from './firebase/firebaseFirestore'
+import { getSharePermission, getTimestampByDate, getTimestampByDateAfterTime, getTimestampByDateOld } from './firebase/firebaseFirestore'
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -14,12 +14,26 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [lookupDate, setLookupDate] = useState<string>('');
+  const [lookupDate, setLookupDate] = useState<string>(getTodayDate());
   const [lookupEmail, setLookupEmail] = useState<string>('');
   const [lookupAuthorized, setLookupAuthorized] = useState<boolean | null>(null);
   const [timestampInformation, setTimestampInformation] = useState<TimestampInformation[]>([]);
 
   const [useOld, setUseOld] = useState<boolean | null>(null);
+
+  function getTodayDate() {
+    const today = new Date();
+  
+    const year = today.getFullYear();
+  
+    // Months are zero-based, so we add 1 and pad with leading zero if necessary
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+  
+    // Days of the month are 1-based, pad with leading zero if necessary
+    const day = String(today.getDate()).padStart(2, '0');
+  
+    return `${year}-${month}-${day}`;
+  }
   
   const handleLogin = async (e: any) => {
     e.preventDefault();
@@ -39,19 +53,53 @@ function App() {
     setIsLoading(true);
     e.preventDefault();
 
+    const cachedTimestampInformation = JSON.parse(localStorage.getItem(uid + "_" + lookupDate) ?? '[]') as TimestampInformation[];
+    if (cachedTimestampInformation) {
+      console.log('cache found');
+      console.log('old timestamps found: ' + cachedTimestampInformation.length)
+
+      const latestTimestamp = (cachedTimestampInformation[cachedTimestampInformation.length - 1]).snapshotTimeUnixEpoch
+
+      const querySnapshot = await getTimestampByDateAfterTime(uid, lookupDate, latestTimestamp ?? 0);
+
+      if (querySnapshot) {
+        const newTimestampInformation: TimestampInformation[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          newTimestampInformation.push(
+            new TimestampInformation(data.latitude, data.longitude, data.locationTimeISOString)
+          );
+        });
+
+        console.log('new timestamps pulled: ' + newTimestampInformation.length);
+
+        const allTimestampInformation = cachedTimestampInformation.concat(newTimestampInformation)
+        localStorage.setItem(uid + "_" + lookupDate, JSON.stringify(allTimestampInformation))
+        setTimestampInformation(allTimestampInformation);
+      }
+      
+
+      setIsLoading(false);
+      return;
+    }
+
+    
+
     const querySnapshot = useOld ? await getTimestampByDateOld(uid, lookupDate) : await getTimestampByDate(uid, lookupDate);
     const timestampInformation: TimestampInformation[] = [];
     if (querySnapshot) {
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        timestampInformation.push(
-          new TimestampInformation(data.latitude, data.longitude, data.locationTimeISOString)
-        );
-      });
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          timestampInformation.push(
+            new TimestampInformation(data.latitude, data.longitude, data.locationTimeISOString)
+          );
+        });
+
+      localStorage.setItem(uid + "_" + lookupDate, JSON.stringify(timestampInformation))
       setTimestampInformation(timestampInformation);
       setIsLoading(false);
     };
-    }
+  }
 
   const handleSearchAuthorize = async (e: any) => {
     setIsLoading(true);
@@ -114,7 +162,9 @@ function App() {
         />
         <button type="submit">Sign In</button>
         <button onClick={handleSignUp}>Register</button>
+        {uid && uid != '' && 'Logged in'}
       </form>
+
 
 
       <input
@@ -139,7 +189,8 @@ function App() {
         Check history on or before 2024-09-01
       </label>
 
-      <input type="date" onChange={(event) => {
+      <input type="date" value={lookupDate}
+      onChange={(event) => {
         console.log(event.currentTarget.value)
         setLookupDate(event.currentTarget.value)
       }}></input>

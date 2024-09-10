@@ -10,11 +10,13 @@ export class TimestampInformation {
     latitude: number;
     longitude: number;
     locationTime: string;
+    snapshotTimeUnixEpoch?: number;
 
-    constructor(latitude: number, longitude: number, locationTime: string) {
+    constructor(latitude: number, longitude: number, locationTime: string, snapshotTimeUnixEpoch?: number) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.locationTime = locationTime;
+        this.snapshotTimeUnixEpoch = snapshotTimeUnixEpoch
     }    
 }
 
@@ -69,7 +71,7 @@ function LeafletWrapper(props: LeafletWrapperProps) {
                             const prevCenter = index == 0 ? currCenter : new LatLng(array[index - 1].latitude, array[index - 1].longitude)
                         
                             return ( 
-                                <div key={coord.locationTime}>
+                                <div key={index + "_" + coord.locationTime}>
                                     <Polyline  positions={[prevCenter, currCenter]}></Polyline>
 
                                     <CircleMarker center={currCenter} radius={5} fill={true}>
