@@ -3,26 +3,13 @@ import "leaflet/dist/leaflet.css";
 import { STARTING_COORDINATES } from './constants';
 import { LatLng } from 'leaflet';
 import { useEffect, useRef } from 'react';
+import LocationSnapshot from '../datamodels/location_snapshot';
 
 
-
-export class TimestampInformation {
-    latitude: number;
-    longitude: number;
-    locationTime: string;
-    snapshotTimeUnixEpoch?: number;
-
-    constructor(latitude: number, longitude: number, locationTime: string, snapshotTimeUnixEpoch?: number) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.locationTime = locationTime;
-        this.snapshotTimeUnixEpoch = snapshotTimeUnixEpoch
-    }    
-}
 
 // Define an interface for props
 export interface LeafletWrapperProps {
-    timestampInformation: TimestampInformation[];
+    timestampInformation: LocationSnapshot[];
 }
 
 function LeafletWrapper(props: LeafletWrapperProps) {
@@ -67,11 +54,11 @@ function LeafletWrapper(props: LeafletWrapperProps) {
                     <FeatureGroup ref={featureGroupRef}>
                         {props.timestampInformation.map(
                             (coord, index, array) => {
-                            const currCenter = new LatLng(coord.latitude, coord.longitude);
-                            const prevCenter = index == 0 ? currCenter : new LatLng(array[index - 1].latitude, array[index - 1].longitude)
+                            const currCenter = new LatLng(coord.latitude ?? 0, coord.longitude ?? 0);
+                            const prevCenter = index == 0 ? currCenter : new LatLng(array[index - 1].latitude ?? 0, array[index - 1].longitude ?? 0)
                         
                             return ( 
-                                <div key={index + "_" + coord.locationTime}>
+                                <div key={index + "_" + coord.snapshotTimeISOString}>
                                     <Polyline  positions={[prevCenter, currCenter]}></Polyline>
 
                                     <CircleMarker center={currCenter} radius={5} fill={true}>
@@ -79,7 +66,7 @@ function LeafletWrapper(props: LeafletWrapperProps) {
                                             <>
                                                 {`Latitude: ${coord.latitude}`} <br/>
                                                 {`Longitude: ${coord.longitude}`} <br/>
-                                                {`Time: ${coord.locationTime}`}
+                                                {`Time: ${coord.snapshotTimeISOString}`}
                                             </>
                                         </Popup>
                                     </CircleMarker>

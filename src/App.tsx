@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import './App.css'
 import { UserCredential } from 'firebase/auth'
-import LeafletWrapper, { TimestampInformation } from './leaflet/leaflet'
+import LeafletWrapper from './leaflet/leaflet'
 import { firebaseSignIn, firebaseSignUp } from './firebase/firebaseAuth'
 import { getSharePermission, getTimestampByDate, getTimestampByDateAfterTime, getTimestampByDateOld } from './firebase/firebaseFirestore'
+import LocationSnapshot from './datamodels/location_snapshot'
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -17,7 +18,7 @@ function App() {
   const [lookupDate, setLookupDate] = useState<string>(getTodayDate());
   const [lookupEmail, setLookupEmail] = useState<string>('');
   const [lookupAuthorized, setLookupAuthorized] = useState<boolean | null>(null);
-  const [timestampInformation, setTimestampInformation] = useState<TimestampInformation[]>([]);
+  const [timestampInformation, setTimestampInformation] = useState<LocationSnapshot[]>([]);
 
   const [useOld, setUseOld] = useState<boolean | null>(null);
 
@@ -53,21 +54,24 @@ function App() {
     setIsLoading(true);
     e.preventDefault();
 
-    const cachedTimestampInformation = JSON.parse(localStorage.getItem(uid + "_" + lookupDate) ?? '[]') as TimestampInformation[];
+    const cachedTimestampInformation = JSON.parse(localStorage.getItem(uid + "_" + lookupDate) ?? '[]') as LocationSnapshot[];
     if (cachedTimestampInformation) {
       console.log('cache found');
       console.log('old timestamps found: ' + cachedTimestampInformation.length)
 
-      const latestTimestamp = (cachedTimestampInformation[cachedTimestampInformation.length - 1]).snapshotTimeUnixEpoch
+      let latestTimestamp = 0;
+      if (cachedTimestampInformation.length > 0){
+        latestTimestamp = (cachedTimestampInformation[cachedTimestampInformation.length - 1]).snapshotTimeUnixEpoch ?? 0
+      }
 
-      const querySnapshot = await getTimestampByDateAfterTime(uid, lookupDate, latestTimestamp ?? 0);
+      const querySnapshot = await getTimestampByDateAfterTime(uid, lookupDate, latestTimestamp);
 
       if (querySnapshot) {
-        const newTimestampInformation: TimestampInformation[] = [];
+        const newTimestampInformation: LocationSnapshot[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           newTimestampInformation.push(
-            new TimestampInformation(data.latitude, data.longitude, data.locationTimeISOString)
+            new LocationSnapshot({"latitude": data.latitude, "longitude": data.longitude, "snapshotTimeISOString": data.snapshotTimeISOString})
           );
         });
 
@@ -86,12 +90,12 @@ function App() {
     
 
     const querySnapshot = useOld ? await getTimestampByDateOld(uid, lookupDate) : await getTimestampByDate(uid, lookupDate);
-    const timestampInformation: TimestampInformation[] = [];
+    const timestampInformation: LocationSnapshot[] = [];
     if (querySnapshot) {
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           timestampInformation.push(
-            new TimestampInformation(data.latitude, data.longitude, data.locationTimeISOString)
+            new LocationSnapshot({"latitude": data.latitude, "longitude": data.longitude, "snapshotTimeISOString": data.snapshotTimeISOString})
           );
         });
 
