@@ -1,7 +1,7 @@
 import { LatLng } from 'leaflet';
 import LocationSnapshot from '../datamodels/location-snapshot';
 import { CircleMarker, Popup } from 'react-leaflet';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface HoverCircleMarkerProps {
 	locationSnapshot: LocationSnapshot;
@@ -12,20 +12,26 @@ function HoverCircleMarker(props: HoverCircleMarkerProps) {
 
 	const [isClicked, setIsClicked] = useState(false);
 
+	const [onPopup, setOnPopup] = useState(false);
+	const onPopupRef = useRef(false);
+	useEffect(() => {
+		onPopupRef.current = onPopup;
+	}, [onPopup]);
+
+	const popupRef = useRef(null);
+
 	// Event handlers
 	const handleMouseEnter = event => {
 		event.target.openPopup();
 	};
 
-	const handleMouseLeave = event => {
-		if (!isClicked) {
-			event.target.closePopup();
-		}
-	};
-
 	const handleClick = event => {
 		setIsClicked(true);
 		event.target.openPopup();
+	};
+
+	const handlePopupCloseOnMouseAway = () => {
+		if (!isClicked) popupRef.current?.close();
 	};
 
 	return (
@@ -41,12 +47,23 @@ function HoverCircleMarker(props: HoverCircleMarkerProps) {
 				fill={true}
 				eventHandlers={{
 					mouseover: handleMouseEnter,
-					mouseout: handleMouseLeave,
 					click: handleClick,
 				}}
 			>
 				{
-					<Popup>
+					<Popup
+						ref={popupRef}
+						interactive
+						eventHandlers={{
+							mouseover: () => {
+								setOnPopup(true);
+							},
+							mouseout: e => {
+								setOnPopup(false);
+								handlePopupCloseOnMouseAway();
+							},
+						}}
+					>
 						<>
 							{
 								<a
