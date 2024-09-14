@@ -85,6 +85,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 								latitude: data.latitude,
 								longitude: data.longitude,
 								snapshotTimeISOString: data.snapshotTimeISOString,
+								snapshotTimeUnixEpoch: data.snapshotTimeUnixEpoch,
 							})
 						);
 					});
@@ -120,6 +121,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 						latitude: data.latitude,
 						longitude: data.longitude,
 						snapshotTimeISOString: data.snapshotTimeISOString,
+						snapshotTimeUnixEpoch: data.snapshotTimeUnixEpoch,
 					})
 				);
 			});
@@ -144,7 +146,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 					setUseOld(
 						new Date(event.currentTarget.value) <= new Date('2024-09-01')
 							? true
-							: !useOld
+							: false
 					);
 				}}
 			></input>
