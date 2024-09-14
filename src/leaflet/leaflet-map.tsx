@@ -1,5 +1,4 @@
 import {
-	CircleMarker,
 	FeatureGroup,
 	MapContainer,
 	Marker,

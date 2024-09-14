@@ -21,11 +21,11 @@ function HoverCircleMarker(props: HoverCircleMarkerProps) {
 	const popupRef = useRef(null);
 
 	// Event handlers
-	const handleMouseEnter = event => {
+	const handleMouseEnter = (event: { target: { openPopup: () => void } }) => {
 		event.target.openPopup();
 	};
 
-	const handleClick = event => {
+	const handleClick = (event: { target: { openPopup: () => void } }) => {
 		setIsClicked(true);
 		event.target.openPopup();
 	};
@@ -58,7 +58,7 @@ function HoverCircleMarker(props: HoverCircleMarkerProps) {
 							mouseover: () => {
 								setOnPopup(true);
 							},
-							mouseout: e => {
+							mouseout: () => {
 								setOnPopup(false);
 								handlePopupCloseOnMouseAway();
 							},

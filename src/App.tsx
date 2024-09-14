@@ -4,7 +4,6 @@ import LeafletWrapper from './leaflet/leaflet-map';
 import LocationSnapshot from './datamodels/location-snapshot';
 import UserLoginForm from './authentication/user-login-form';
 import LeafletFilter, { LeafletMarketInterval } from './leaflet/leaflet-filter';
-import { marker } from 'leaflet';
 
 function App() {
 	const [timestampInformation, setTimestampInformation] = useState<

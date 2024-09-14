@@ -10,7 +10,7 @@ function UserShareAuthorize() {
 	const handleSearchAuthorize = async (e: any) => {
 		e.preventDefault();
 
-		const querySnapshot = await getSharePermission(uid, lookupEmail);
+		const querySnapshot = await getSharePermission('', lookupEmail);
 		if (querySnapshot) {
 			console.log(querySnapshot.data());
 			setLookupAuthorized(true);
