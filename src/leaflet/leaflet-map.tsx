@@ -14,6 +14,7 @@ import { LatLng } from 'leaflet';
 import { useEffect, useRef } from 'react';
 import LocationSnapshot from '../datamodels/location-snapshot';
 import { LeafletMarketInterval } from './leaflet-filter';
+import HoverCircleMarker from './hover-circle-marker';
 
 // Define an interface for props
 export interface LeafletWrapperProps {
@@ -105,15 +106,9 @@ function LeafletWrapper(props: LeafletWrapperProps) {
 								<div key={index + '_' + coord.snapshotTimeISOString}>
 									<Polyline positions={[prevCenter, currCenter]}></Polyline>
 
-									<CircleMarker center={currCenter} radius={5} fill={true}>
-										<Popup>
-											<>
-												{`Latitude: ${coord.latitude}`} <br />
-												{`Longitude: ${coord.longitude}`} <br />
-												{`Time: ${coord.snapshotTimeISOString}`}
-											</>
-										</Popup>
-									</CircleMarker>
+									<HoverCircleMarker
+										locationSnapshot={coord}
+									></HoverCircleMarker>
 								</div>
 							);
 						})}
