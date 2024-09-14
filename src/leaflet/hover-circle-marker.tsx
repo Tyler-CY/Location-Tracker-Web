@@ -48,8 +48,21 @@ function HoverCircleMarker(props: HoverCircleMarkerProps) {
 				{
 					<Popup>
 						<>
+							{
+								<a
+									rel="noopener noreferrer"
+									target="_blank"
+									href={`https://www.google.com/maps/place/${locationSnapshot.latitude},${locationSnapshot.longitude}`}
+								>
+									Link to Google Maps
+								</a>
+							}{' '}
+							<br />
 							{`Latitude: ${locationSnapshot.latitude}`} <br />
 							{`Longitude: ${locationSnapshot.longitude}`} <br />
+							{`Speed: ${locationSnapshot.speed?.toFixed(4)} m/s`} <br />
+							{`Altitude: ${locationSnapshot.altitude?.toFixed(4)} m`} <br />
+							<br />
 							{`Time: ${locationSnapshot.snapshotTimeISOString}`}
 						</>
 					</Popup>

@@ -86,6 +86,8 @@ function LeafletFilter(props: LeafletFilterProps) {
 								longitude: data.longitude,
 								snapshotTimeISOString: data.snapshotTimeISOString,
 								snapshotTimeUnixEpoch: data.snapshotTimeUnixEpoch,
+								speed: data.hasSpeed ? data.speed : null,
+								altitude: data.hasAltitude ? data.altitude : null,
 							})
 						);
 					});
@@ -122,6 +124,8 @@ function LeafletFilter(props: LeafletFilterProps) {
 						longitude: data.longitude,
 						snapshotTimeISOString: data.snapshotTimeISOString,
 						snapshotTimeUnixEpoch: data.snapshotTimeUnixEpoch,
+						speed: data.hasSpeed ? data.speed : null,
+						altitude: data.hasAltitude ? data.altitude : null,
 					})
 				);
 			});
