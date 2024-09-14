@@ -12,7 +12,7 @@ import 'leaflet/dist/leaflet.css';
 import { STARTING_COORDINATES } from './constants';
 import { LatLng } from 'leaflet';
 import { useEffect, useRef } from 'react';
-import LocationSnapshot from '../datamodels/location_snapshot';
+import LocationSnapshot from '../datamodels/location-snapshot';
 
 // Define an interface for props
 export interface LeafletWrapperProps {

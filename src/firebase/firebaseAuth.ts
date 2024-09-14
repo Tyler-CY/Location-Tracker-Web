@@ -6,7 +6,7 @@ import {
 import { auth } from './firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 
-export const firebaseSignIn = async (
+export const firebaseLogin = async (
 	email: string,
 	password: string
 ): Promise<UserCredential | null> => {
@@ -22,7 +22,7 @@ export const firebaseSignIn = async (
 		});
 };
 
-export const firebaseSignUp = async (
+export const firebaseRegister = async (
 	email: string,
 	password: string
 ): Promise<UserCredential | null> => {
