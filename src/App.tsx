@@ -3,7 +3,8 @@ import './App.css';
 import LeafletWrapper from './leaflet/leaflet-map';
 import LocationSnapshot from './datamodels/location-snapshot';
 import UserLoginForm from './authentication/user-login-form';
-import LeafletFilter from './leaflet/leaflet-filter';
+import LeafletFilter, { LeafletMarketInterval } from './leaflet/leaflet-filter';
+import { marker } from 'leaflet';
 
 function App() {
 	const [timestampInformation, setTimestampInformation] = useState<
@@ -11,6 +12,10 @@ function App() {
 	>([]);
 
 	const [uid, setUid] = useState('');
+
+	const [markerInterval, setMarkerInterval] = useState<LeafletMarketInterval>(
+		LeafletMarketInterval.NONE
+	);
 
 	return (
 		<>
@@ -21,9 +26,11 @@ function App() {
 			<LeafletFilter
 				uid={uid}
 				setTimestampInformation={setTimestampInformation}
+				setMarkerInterval={setMarkerInterval}
 			></LeafletFilter>
 
 			<LeafletWrapper
+				markerInterval={markerInterval}
 				timestampInformation={timestampInformation}
 			></LeafletWrapper>
 		</>

@@ -12,6 +12,16 @@ export interface LeafletFilterProps {
 	setTimestampInformation: React.Dispatch<
 		React.SetStateAction<LocationSnapshot[]>
 	>;
+	setMarkerInterval: React.Dispatch<
+		React.SetStateAction<LeafletMarketInterval>
+	>;
+}
+
+export enum LeafletMarketInterval {
+	NONE = 'NONE',
+	SMALL = 'SMALL',
+	MEDIUM = 'MEDIUM',
+	LARGE = 'LARGE',
 }
 
 function LeafletFilter(props: LeafletFilterProps) {
@@ -21,7 +31,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 
 	const [useOld, setUseOld] = useState<boolean | null>(null);
 
-	const { uid, setTimestampInformation } = props;
+	const { uid, setTimestampInformation, setMarkerInterval } = props;
 
 	function getTodayDate() {
 		const today = new Date();
@@ -116,26 +126,44 @@ function LeafletFilter(props: LeafletFilterProps) {
 	};
 	return (
 		<>
-			<label>
-				<input
-					type="checkbox"
-					checked={useOld ?? false}
-					onChange={() => {
-						setUseOld(useOld == null ? true : !useOld);
-					}}
-				/>
-				Check history on or before 2024-09-01
-			</label>
-
+			<label>Day of Timeline History: </label>
 			<input
 				type="date"
 				value={lookupDate}
 				onChange={event => {
 					console.log(event.currentTarget.value);
 					setLookupDate(event.currentTarget.value);
+					console.log(
+						new Date(event.currentTarget.value) <= new Date('2024-09-01')
+					);
+					setUseOld(
+						new Date(event.currentTarget.value) <= new Date('2024-09-01')
+							? true
+							: !useOld
+					);
 				}}
 			></input>
-			<button onClick={handleSearch}>Search</button>
+
+			<br />
+
+			<label>Marker render interval: </label>
+			<select
+				name="marker-interval"
+				id="market-interval-dropdown"
+				onChange={e => {
+					console.log(e.target.value);
+					setMarkerInterval(e.target.value as LeafletMarketInterval);
+					console.log(e.target.value);
+				}}
+			>
+				<option value={LeafletMarketInterval.NONE}>Default (10 seconds)</option>
+				<option value={LeafletMarketInterval.SMALL}>Small (1 minute)</option>
+				<option value={LeafletMarketInterval.MEDIUM}>Medium (5 minutes)</option>
+				<option value={LeafletMarketInterval.LARGE}>Large (10 minutes)</option>
+			</select>
+
+			<br />
+			<button onClick={handleSearch}>Apply filter</button>
 			{isLoading && 'Loading...'}
 		</>
 	);

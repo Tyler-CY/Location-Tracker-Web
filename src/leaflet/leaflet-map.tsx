@@ -13,9 +13,11 @@ import { STARTING_COORDINATES } from './constants';
 import { LatLng } from 'leaflet';
 import { useEffect, useRef } from 'react';
 import LocationSnapshot from '../datamodels/location-snapshot';
+import { LeafletMarketInterval } from './leaflet-filter';
 
 // Define an interface for props
 export interface LeafletWrapperProps {
+	markerInterval: LeafletMarketInterval;
 	timestampInformation: LocationSnapshot[];
 }
 
@@ -65,16 +67,38 @@ function LeafletWrapper(props: LeafletWrapperProps) {
 
 					<FeatureGroup ref={featureGroupRef}>
 						{props.timestampInformation.map((coord, index, array) => {
+							let index_offset = 1;
+
+							if (props.markerInterval === LeafletMarketInterval.SMALL) {
+								index_offset = 10;
+								if (!(index % 10 === 0)) {
+									return null;
+								}
+							}
+							if (props.markerInterval === LeafletMarketInterval.MEDIUM) {
+								index_offset = 50;
+								if (!(index % 50 === 0)) {
+									return null;
+								}
+							}
+							if (props.markerInterval === LeafletMarketInterval.LARGE) {
+								index_offset = 100;
+								if (!(index % 100 === 0)) {
+									return null;
+								}
+							}
+
 							const currCenter = new LatLng(
 								coord.latitude ?? 0,
 								coord.longitude ?? 0
 							);
+
 							const prevCenter =
 								index == 0
 									? currCenter
 									: new LatLng(
-											array[index - 1].latitude ?? 0,
-											array[index - 1].longitude ?? 0
+											array[Math.max(0, index - index_offset)].latitude ?? 0,
+											array[Math.max(0, index - index_offset)].longitude ?? 0
 										);
 
 							return (
