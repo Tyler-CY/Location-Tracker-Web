@@ -14,6 +14,9 @@ import { useEffect, useRef } from 'react';
 import LocationSnapshot from '../datamodels/location-snapshot';
 import { LeafletMarketInterval } from './leaflet-filter';
 import HoverCircleMarker from './hover-circle-marker';
+// Might need this
+import markerIconPng from 'leaflet/dist/images/marker-icon.png';
+import { Icon } from 'leaflet';
 
 // Define an interface for props
 export interface LeafletWrapperProps {
@@ -43,11 +46,6 @@ function LeafletWrapper(props: LeafletWrapperProps) {
 		return null; // This component does not render anything
 	};
 
-	// Might need this
-	// import markerIconPng from "leaflet/dist/images/marker-icon.png"
-	// import {Icon} from 'leaflet'
-	// <Marker position={[lat, lng]} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})} />
-
 	return (
 		<>
 			<div id="map" style={{ width: '100%' }}>
@@ -61,7 +59,16 @@ function LeafletWrapper(props: LeafletWrapperProps) {
 						attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					/>
-					<Marker position={STARTING_COORDINATES}>
+					<Marker
+						position={STARTING_COORDINATES}
+						icon={
+							new Icon({
+								iconUrl: markerIconPng,
+								iconSize: [25, 41],
+								iconAnchor: [12, 41],
+							})
+						}
+					>
 						<Popup>Downtown Toronto</Popup>
 					</Marker>
 
