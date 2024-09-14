@@ -31,7 +31,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 
 	const [useOld, setUseOld] = useState<boolean | null>(null);
 
-	const [useCache, setUseCache] = useState<boolean>(false);
+	const [useCache, setUseCache] = useState<boolean>(true);
 
 	const { uid, setTimestampInformation, setMarkerInterval } = props;
 
@@ -180,7 +180,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 					checked={useCache}
 					onChange={() => setUseCache(!useCache)}
 				/>
-				Use cache
+				Use cache (Strongly recommended)
 			</label>
 
 			<br />
