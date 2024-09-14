@@ -31,6 +31,8 @@ function LeafletFilter(props: LeafletFilterProps) {
 
 	const [useOld, setUseOld] = useState<boolean | null>(null);
 
+	const [useCache, setUseCache] = useState<boolean>(false);
+
 	const { uid, setTimestampInformation, setMarkerInterval } = props;
 
 	function getTodayDate() {
@@ -51,53 +53,59 @@ function LeafletFilter(props: LeafletFilterProps) {
 		setIsLoading(true);
 		e.preventDefault();
 
-		const cachedTimestampInformation = JSON.parse(
-			localStorage.getItem(uid + '_' + lookupDate) ?? '[]'
-		) as LocationSnapshot[];
-		if (cachedTimestampInformation) {
-			console.log('cache found');
-			console.log('old timestamps found: ' + cachedTimestampInformation.length);
+		if (useCache) {
+			const cachedTimestampInformation = JSON.parse(
+				localStorage.getItem(uid + '_' + lookupDate) ?? '[]'
+			) as LocationSnapshot[];
+			if (cachedTimestampInformation) {
+				console.log('cache found');
+				console.log(
+					'old timestamps found: ' + cachedTimestampInformation.length
+				);
 
-			let latestTimestamp = 0;
-			if (cachedTimestampInformation.length > 0) {
-				latestTimestamp =
-					cachedTimestampInformation[cachedTimestampInformation.length - 1]
-						.snapshotTimeUnixEpoch ?? 0;
-			}
+				let latestTimestamp = 0;
+				if (cachedTimestampInformation.length > 0) {
+					latestTimestamp =
+						cachedTimestampInformation[cachedTimestampInformation.length - 1]
+							.snapshotTimeUnixEpoch ?? 0;
+				}
 
-			const querySnapshot = await getTimestampByDateAfterTime(
-				uid,
-				lookupDate,
-				latestTimestamp
-			);
+				const querySnapshot = await getTimestampByDateAfterTime(
+					uid,
+					lookupDate,
+					latestTimestamp
+				);
 
-			if (querySnapshot) {
-				const newTimestampInformation: LocationSnapshot[] = [];
-				querySnapshot.forEach(doc => {
-					const data = doc.data();
-					newTimestampInformation.push(
-						new LocationSnapshot({
-							latitude: data.latitude,
-							longitude: data.longitude,
-							snapshotTimeISOString: data.snapshotTimeISOString,
-						})
+				if (querySnapshot) {
+					const newTimestampInformation: LocationSnapshot[] = [];
+					querySnapshot.forEach(doc => {
+						const data = doc.data();
+						newTimestampInformation.push(
+							new LocationSnapshot({
+								latitude: data.latitude,
+								longitude: data.longitude,
+								snapshotTimeISOString: data.snapshotTimeISOString,
+							})
+						);
+					});
+
+					console.log(
+						'new timestamps pulled: ' + newTimestampInformation.length
 					);
-				});
 
-				console.log('new timestamps pulled: ' + newTimestampInformation.length);
+					const allTimestampInformation = cachedTimestampInformation.concat(
+						newTimestampInformation
+					);
+					localStorage.setItem(
+						uid + '_' + lookupDate,
+						JSON.stringify(allTimestampInformation)
+					);
+					setTimestampInformation(allTimestampInformation);
+				}
 
-				const allTimestampInformation = cachedTimestampInformation.concat(
-					newTimestampInformation
-				);
-				localStorage.setItem(
-					uid + '_' + lookupDate,
-					JSON.stringify(allTimestampInformation)
-				);
-				setTimestampInformation(allTimestampInformation);
+				setIsLoading(false);
+				return;
 			}
-
-			setIsLoading(false);
-			return;
 		}
 
 		const querySnapshot = useOld
@@ -133,9 +141,6 @@ function LeafletFilter(props: LeafletFilterProps) {
 				onChange={event => {
 					console.log(event.currentTarget.value);
 					setLookupDate(event.currentTarget.value);
-					console.log(
-						new Date(event.currentTarget.value) <= new Date('2024-09-01')
-					);
 					setUseOld(
 						new Date(event.currentTarget.value) <= new Date('2024-09-01')
 							? true
@@ -151,9 +156,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 				name="marker-interval"
 				id="market-interval-dropdown"
 				onChange={e => {
-					console.log(e.target.value);
 					setMarkerInterval(e.target.value as LeafletMarketInterval);
-					console.log(e.target.value);
 				}}
 			>
 				<option value={LeafletMarketInterval.NONE}>Default (10 seconds)</option>
@@ -161,6 +164,18 @@ function LeafletFilter(props: LeafletFilterProps) {
 				<option value={LeafletMarketInterval.MEDIUM}>Medium (5 minutes)</option>
 				<option value={LeafletMarketInterval.LARGE}>Large (10 minutes)</option>
 			</select>
+
+			<br />
+
+			<label>
+				<input
+					type="checkbox"
+					name="subscribe"
+					checked={useCache}
+					onChange={() => setUseCache(!useCache)}
+				/>
+				Use cache
+			</label>
 
 			<br />
 			<button onClick={handleSearch}>Apply filter</button>
