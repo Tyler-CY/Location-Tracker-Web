@@ -25,13 +25,17 @@ function HoverCircleMarker(props: HoverCircleMarkerProps) {
 		event.target.openPopup();
 	};
 
+	const handleMouseLeave = (event: { target: { closePopup: () => void } }) => {
+		if (!isClicked) {
+			setTimeout(() => {
+				if (!onPopupRef.current) event.target.closePopup();
+			}, 500);
+		}
+	};
+
 	const handleClick = (event: { target: { openPopup: () => void } }) => {
 		setIsClicked(true);
 		event.target.openPopup();
-	};
-
-	const handlePopupCloseOnMouseAway = () => {
-		if (!isClicked) popupRef.current?.close();
 	};
 
 	return (
@@ -47,6 +51,7 @@ function HoverCircleMarker(props: HoverCircleMarkerProps) {
 				fill={true}
 				eventHandlers={{
 					mouseover: handleMouseEnter,
+					mouseout: handleMouseLeave,
 					click: handleClick,
 				}}
 			>
@@ -58,9 +63,9 @@ function HoverCircleMarker(props: HoverCircleMarkerProps) {
 							mouseover: () => {
 								setOnPopup(true);
 							},
-							mouseout: () => {
+							mouseout: e => {
 								setOnPopup(false);
-								handlePopupCloseOnMouseAway();
+								if (!isClicked) e.target.close();
 							},
 						}}
 					>
