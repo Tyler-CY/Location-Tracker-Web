@@ -18,7 +18,7 @@ export const firebaseLogin = async (
 		})
 		.catch((error: FirebaseError) => {
 			console.error('Error signing in:', error.message);
-			return null;
+			throw error;
 		});
 };
 
@@ -34,6 +34,6 @@ export const firebaseRegister = async (
 		})
 		.catch((error: FirebaseError) => {
 			console.error('Error signing in:', error.message);
-			return null;
+			throw error;
 		});
 };

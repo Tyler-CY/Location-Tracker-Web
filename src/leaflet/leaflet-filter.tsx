@@ -9,6 +9,7 @@ import {
 // Define an interface for props
 export interface LeafletFilterProps {
 	uid: string;
+	timestampInformation: LocationSnapshot[];
 	setTimestampInformation: React.Dispatch<
 		React.SetStateAction<LocationSnapshot[]>
 	>;
@@ -26,6 +27,7 @@ export enum LeafletMarketInterval {
 
 function LeafletFilter(props: LeafletFilterProps) {
 	const [isLoading, setIsLoading] = useState(false);
+	const [isLoaded, setIsLoaded] = useState(false);
 
 	const [lookupDate, setLookupDate] = useState<string>(getTodayDate());
 
@@ -33,7 +35,12 @@ function LeafletFilter(props: LeafletFilterProps) {
 
 	const [useCache, setUseCache] = useState<boolean>(true);
 
-	const { uid, setTimestampInformation, setMarkerInterval } = props;
+	const {
+		uid,
+		timestampInformation,
+		setTimestampInformation,
+		setMarkerInterval,
+	} = props;
 
 	function getTodayDate() {
 		const today = new Date();
@@ -50,6 +57,10 @@ function LeafletFilter(props: LeafletFilterProps) {
 	}
 
 	const handleSearch = async (e: any) => {
+		if (!uid) {
+			return;
+		}
+		setIsLoaded(false);
 		setIsLoading(true);
 		e.preventDefault();
 
@@ -107,6 +118,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 				}
 
 				setIsLoading(false);
+				setIsLoaded(true);
 				return;
 			}
 		}
@@ -140,7 +152,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 	};
 	return (
 		<>
-			<label>Day of Timeline History: </label>
+			<label>Day of timeline history: </label>
 			<input
 				type="date"
 				value={lookupDate}
@@ -185,7 +197,16 @@ function LeafletFilter(props: LeafletFilterProps) {
 
 			<br />
 			<button onClick={handleSearch}>Apply filter</button>
-			{isLoading && 'Loading...'}
+			{!uid && 'Login required.'}
+			{uid &&
+				timestampInformation?.length === 0 &&
+				isLoaded &&
+				'No results found.'}
+			{uid &&
+				timestampInformation?.length > 0 &&
+				isLoaded &&
+				`Total ${timestampInformation.length} location snapshots found.`}
+			{uid && isLoading && 'Loading...'}
 		</>
 	);
 }

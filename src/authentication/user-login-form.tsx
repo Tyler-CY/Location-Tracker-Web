@@ -1,6 +1,7 @@
 import { UserCredential } from 'firebase/auth';
 import { useState } from 'react';
 import { firebaseLogin, firebaseRegister } from '../firebase/firebaseAuth';
+import { FirebaseError } from 'firebase/app';
 
 // Define an interface for props
 export interface UserLoginFormProps {
@@ -11,16 +12,28 @@ export interface UserLoginFormProps {
 function UserLoginForm(props: UserLoginFormProps) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [error, setError] = useState('');
+	const [userCredential, setUserCredential] = useState<UserCredential | null>(
+		null
+	);
 	const { uid, setUid } = props;
 
 	const handleLogin = async (e: any) => {
 		e.preventDefault();
 
-		const userCredential: UserCredential | null = await firebaseLogin(
-			email,
-			password
-		);
-		setUid(userCredential?.user?.uid ?? '');
+		try {
+			const userCredential: UserCredential | null = await firebaseLogin(
+				email,
+				password
+			);
+			setError('');
+			setUserCredential(userCredential);
+			setUid(userCredential?.user?.uid ?? '');
+		} catch (e: unknown) {
+			if (e instanceof FirebaseError) {
+				setError(e.message);
+			}
+		}
 	};
 
 	const handleSignUp = async (e: any) => {
@@ -51,8 +64,11 @@ function UserLoginForm(props: UserLoginFormProps) {
 					required
 				/>
 				<button type="submit">Sign In</button>
-				<button onClick={handleSignUp}>Register</button>
-				{uid && uid != '' && 'Logged in'}
+				<button onClick={handleSignUp} disabled>
+					Register
+				</button>
+				{error}
+				{uid && uid != '' && `Logged in as ${userCredential?.user?.email}`}
 			</form>
 		</>
 	);

@@ -24,6 +24,7 @@ function App() {
 
 			<LeafletFilter
 				uid={uid}
+				timestampInformation={timestampInformation}
 				setTimestampInformation={setTimestampInformation}
 				setMarkerInterval={setMarkerInterval}
 			></LeafletFilter>
