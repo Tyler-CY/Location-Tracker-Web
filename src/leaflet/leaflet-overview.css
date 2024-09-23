@@ -1,0 +1,27 @@
+.leaflet-overview-row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: 100%;
+}
+
+.leaflet-overview-column {
+	display: flex;
+	flex-direction: column;
+}
+
+.leaflet-overview-column-side {
+	overflow-y: scroll;
+	height: 90vh;
+	width: 30%;
+}
+.leaflet-overview-column-main {
+	height: 90vh;
+	width: 70%;
+}
+
+.leaflet-overview-separator {
+	height: 1px;
+	background-color: rgba(0, 0, 0, 0.1);
+	margin: 20px 0;
+}

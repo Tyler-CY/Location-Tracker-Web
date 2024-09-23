@@ -1,38 +1,10 @@
-import { useState } from 'react';
 import './App.css';
-import LeafletWrapper from './leaflet/leaflet-map';
-import LocationSnapshot from './datamodels/location-snapshot';
-import UserLoginForm from './authentication/user-login-form';
-import LeafletFilter, { LeafletMarketInterval } from './leaflet/leaflet-filter';
+import LeafletOverview from './leaflet/leaflet-overview';
 
 function App() {
-	const [timestampInformation, setTimestampInformation] = useState<
-		LocationSnapshot[]
-	>([]);
-
-	const [uid, setUid] = useState('');
-
-	const [markerInterval, setMarkerInterval] = useState<LeafletMarketInterval>(
-		LeafletMarketInterval.NONE
-	);
-
 	return (
 		<>
-			<UserLoginForm uid={uid} setUid={setUid}></UserLoginForm>
-
-			<br />
-
-			<LeafletFilter
-				uid={uid}
-				timestampInformation={timestampInformation}
-				setTimestampInformation={setTimestampInformation}
-				setMarkerInterval={setMarkerInterval}
-			></LeafletFilter>
-
-			<LeafletWrapper
-				markerInterval={markerInterval}
-				timestampInformation={timestampInformation}
-			></LeafletWrapper>
+			<LeafletOverview />
 		</>
 	);
 }
