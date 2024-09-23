@@ -34,6 +34,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 	const [useOld, setUseOld] = useState<boolean | null>(null);
 
 	const [useCache, setUseCache] = useState<boolean>(true);
+	const [exclamationCount, setExclamationCount] = useState<number>(0);
 
 	const {
 		uid,
@@ -58,6 +59,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 
 	const handleSearch = async (e: any) => {
 		if (!uid) {
+			setExclamationCount(exclamationCount + 1);
 			return;
 		}
 		setIsLoaded(false);
@@ -152,7 +154,9 @@ function LeafletFilter(props: LeafletFilterProps) {
 	};
 	return (
 		<>
-			<label>Day of timeline history: </label>
+			<label>Filter</label>
+			<br />
+			<label>Date</label>
 			<input
 				type="date"
 				value={lookupDate}
@@ -169,7 +173,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 
 			<br />
 
-			<label>Marker render interval: </label>
+			<label>Marker Concentration</label>
 			<select
 				name="marker-interval"
 				id="market-interval-dropdown"
@@ -177,10 +181,10 @@ function LeafletFilter(props: LeafletFilterProps) {
 					setMarkerInterval(e.target.value as LeafletMarketInterval);
 				}}
 			>
-				<option value={LeafletMarketInterval.NONE}>Default (10 seconds)</option>
-				<option value={LeafletMarketInterval.SMALL}>Small (1 minute)</option>
-				<option value={LeafletMarketInterval.MEDIUM}>Medium (5 minutes)</option>
-				<option value={LeafletMarketInterval.LARGE}>Large (10 minutes)</option>
+				<option value={LeafletMarketInterval.NONE}>Highest</option>
+				<option value={LeafletMarketInterval.SMALL}>Medium</option>
+				<option value={LeafletMarketInterval.MEDIUM}>Low</option>
+				<option value={LeafletMarketInterval.LARGE}>Lowest</option>
 			</select>
 
 			<br />
@@ -197,7 +201,8 @@ function LeafletFilter(props: LeafletFilterProps) {
 
 			<br />
 			<button onClick={handleSearch}>Apply filter</button>
-			{!uid && 'Login required.'}
+			<br />
+			{!uid && 'Login required' + '!'.repeat(exclamationCount)}
 			{uid &&
 				timestampInformation?.length === 0 &&
 				isLoaded &&

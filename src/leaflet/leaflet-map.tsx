@@ -48,12 +48,12 @@ function LeafletWrapper(props: LeafletWrapperProps) {
 
 	return (
 		<>
-			<div id="map" style={{ width: '100%' }}>
+			<div id="map" style={{ width: '100%', height: '100%' }}>
 				<MapContainer
 					center={STARTING_COORDINATES}
 					zoom={13}
 					preferCanvas={true}
-					style={{ height: '1000px' }}
+					style={{ height: '100%', minHeight: '100%' }}
 				>
 					<TileLayer
 						attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -106,7 +106,7 @@ function LeafletWrapper(props: LeafletWrapperProps) {
 									: new LatLng(
 											array[Math.max(0, index - index_offset)].latitude ?? 0,
 											array[Math.max(0, index - index_offset)].longitude ?? 0
-										);
+									  );
 
 							return (
 								<div key={index + '_' + coord.snapshotTimeISOString}>
