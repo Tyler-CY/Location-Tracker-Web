@@ -13,7 +13,7 @@ export const firebaseLogin = async (
 	return signInWithEmailAndPassword(auth, email, password)
 		.then(userCredential => {
 			// Signed in
-			console.log(userCredential);
+			// console.log(userCredential);
 			return userCredential;
 		})
 		.catch((error: FirebaseError) => {
@@ -29,7 +29,7 @@ export const firebaseRegister = async (
 	return createUserWithEmailAndPassword(auth, email, password)
 		.then(userCredential => {
 			// Signed in
-			console.log(userCredential);
+			// console.log(userCredential);
 			return userCredential;
 		})
 		.catch((error: FirebaseError) => {

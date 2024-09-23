@@ -71,9 +71,9 @@ function LeafletFilter(props: LeafletFilterProps) {
 				localStorage.getItem(uid + '_' + lookupDate) ?? '[]'
 			) as LocationSnapshot[];
 			if (cachedTimestampInformation) {
-				console.log('cache found');
+				// console.log('cache found');
 				console.log(
-					'old timestamps found: ' + cachedTimestampInformation.length
+					'Timestamps from cached: ' + cachedTimestampInformation.length
 				);
 
 				let latestTimestamp = 0;
@@ -106,7 +106,7 @@ function LeafletFilter(props: LeafletFilterProps) {
 					});
 
 					console.log(
-						'new timestamps pulled: ' + newTimestampInformation.length
+						'Timestamps from cloud: ' + newTimestampInformation.length
 					);
 
 					const allTimestampInformation = cachedTimestampInformation.concat(
@@ -161,7 +161,6 @@ function LeafletFilter(props: LeafletFilterProps) {
 				type="date"
 				value={lookupDate}
 				onChange={event => {
-					console.log(event.currentTarget.value);
 					setLookupDate(event.currentTarget.value);
 					setUseOld(
 						new Date(event.currentTarget.value) <= new Date('2024-09-01')
