@@ -49,6 +49,8 @@ function UserLoginForm(props: UserLoginFormProps) {
 	return (
 		<>
 			<form onSubmit={handleLogin}>
+				<label>Login</label>
+				<br />
 				<input
 					type="email"
 					value={email}
@@ -56,6 +58,7 @@ function UserLoginForm(props: UserLoginFormProps) {
 					placeholder="Email"
 					required
 				/>
+				<br />
 				<input
 					type="password"
 					value={password}
@@ -63,11 +66,14 @@ function UserLoginForm(props: UserLoginFormProps) {
 					placeholder="Password"
 					required
 				/>
+				<br />
 				<button type="submit">Sign In</button>
 				<button onClick={handleSignUp} disabled>
 					Register
 				</button>
+				<br />
 				{error}
+				<br />
 				{uid && uid != '' && `Logged in as ${userCredential?.user?.email}`}
 			</form>
 		</>
