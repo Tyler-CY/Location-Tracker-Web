@@ -26,6 +26,21 @@ export const getTimestampByDateOld = async (
 	}
 };
 
+export const getDatesWithRecords = async (
+	uid: string
+): Promise<QuerySnapshot<DocumentData, DocumentData> | undefined> => {
+	try {
+		const collectionRef = collection(db, 'snapshots', uid, 'personal');
+
+		const querySnapshot = await getDocs(collectionRef);
+
+		return querySnapshot;
+	} catch (error: any) {
+		console.error('Unexpected error occurred:', error.message);
+		return undefined;
+	}
+};
+
 export const getTimestampByDate = async (
 	uid: string,
 	date: string
