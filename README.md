@@ -43,7 +43,7 @@ To install dependencies, run `npm install` to install on dependencies automatica
 
 #### For Common Users
 1. For the Android app, download the Android APK on the Releases section on GitHub [Android App](https://github.com/Tyler-CY/Location-Tracker-Android).
-2. Visit the Location Tracker website, hosted by Google Firebase, on [REDACTED].
+2. Visit the Location Tracker website, hosted by Google Firebase. See Releases or About sections for latest URL.
 
 ## Help
 
