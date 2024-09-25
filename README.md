@@ -60,10 +60,6 @@ Note this web application is still under active development. Features may come a
 * 1.0
     * Initial Release
 
-## License
-
-This project is licensed under the Tyler-CY License - see the LICENSE.md file for details
-
 ## Acknowledgments
 
 * [Official Vite Documentation](https://vitejs.dev/)
