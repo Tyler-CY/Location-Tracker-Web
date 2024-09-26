@@ -8,6 +8,10 @@ Location Tracker - Web Companion is a single page application created with Vite,
 
 This web companion allows desktop access of your travel history, and requires the android app for GPS tracking and location sharing.
 
+| Prototype                                                                     |
+|-------------------------------------------------------------------------------|
+| <img src="./doc/prototype.png">   |
+
 
 
 ## Features
